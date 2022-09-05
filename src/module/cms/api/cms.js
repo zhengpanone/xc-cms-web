@@ -13,3 +13,23 @@ export const pageList = (page, size, params) => {
 export const siteList = () => {
     return http.requestQuickGet(`${apiUrl}/cms/site/list`)
 }
+
+export const templateList = () => {
+    return http.requestQuickGet(`${apiUrl}/cms/template/list`)
+}
+
+export const pageAdd = (params) => {
+    return http.requestPost(`${apiUrl}/cms/page/add`,params)
+}
+
+export const pageById = (id) => {
+    return http.requestGet(`${apiUrl}/cms/page/get/${id}`)
+}
+
+export const pageUpdate = (id,params) => {
+    return http.requestPut(`${apiUrl}/cms/page/edit/${id}`,params)
+}
+
+export const pageDelete = (pageId) => {
+    return http.requestDelete(`${apiUrl}/cms/page/delete/${pageId}`)
+}

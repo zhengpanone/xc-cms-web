@@ -15,6 +15,11 @@
             <el-form-item>
                 <el-button type="primary" size="small" @click="query">查询</el-button>
             </el-form-item>
+            <el-form-item>
+                <router-link :to="{ path: '/cms/page/add', query: { page: this.page, siteId: this.params.siteId } }">
+                    <el-button type="primary" size="small" @click="query">添加页面</el-button>
+                </router-link>
+            </el-form-item>
         </el-form>
 
         <el-table :data="tableData" stripe style="width: 100%" :fit=true>
@@ -30,6 +35,12 @@
             </el-table-column>
             <el-table-column prop="pageCreateTime" label="创建时间">
             </el-table-column>
+            <el-table-column fixed="right" label="操作" width="100">
+                <template slot-scope="scope">
+                    <el-button type="text" size="small" @click="handleEdit(scope.row.pageId)">编辑</el-button>
+                    <el-button @click="handleDelete(scope.row.pageId)" type="text" size="small">删除</el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total" :page-size=size
             :page-sizes="[10, 20, 30, 50]" :current-page=page @current-change="changePage" style="float:right">
@@ -38,7 +49,7 @@
 </template>
 
 <script>
-import { pageList, siteList } from '../api/cms'
+import { pageList, siteList, pageDelete } from '../api/cms'
 export default {
     data() {
         return {
@@ -65,7 +76,30 @@ export default {
         changePage: function (currentPage) {
             this.page = currentPage
             this.query()
+        },
+        handleEdit: function (pageId) {
+            this.$router.push({
+                path: `/cms/page/edit/${pageId}`
+            })
+
+        },
+        handleDelete: function (pageId) {
+            pageDelete(pageId).then((res) => {
+                if (res.success) {
+                    this.$message.success('删除成功')
+                    this.query()
+                } else {
+                    this.$message.error('删除失败')
+                }
+
+            })
         }
+
+    },
+    created() {
+        console.log(this.$route)
+        this.page = Number.parseInt(this.$route.query.page || 1)
+        this.params.siteId = this.$route.query.siteId || ''
     },
     mounted() { // DOM元素渲染后
         this.query()
